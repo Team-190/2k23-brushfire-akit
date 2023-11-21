@@ -34,6 +34,9 @@ import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.roller.Roller;
+import frc.robot.subsystems.roller.RollerIOSim;
+import frc.robot.subsystems.roller.RollerIOTalonFX;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -48,6 +51,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Flywheel flywheel;
+  private final Roller roller;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -62,14 +66,16 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-   
-        drive = new Drive(
-        new GyroIOPigeon2(),
-        new ModuleIOTalonFX(0),
-        new ModuleIOTalonFX(1),
-        new ModuleIOTalonFX(2),
-        new ModuleIOTalonFX(3));
+
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(0),
+                new ModuleIOTalonFX(1),
+                new ModuleIOTalonFX(2),
+                new ModuleIOTalonFX(3));
         flywheel = new Flywheel(new FlywheelIOTalonFX());
+        roller = new Roller(new RollerIOTalonFX());
         break;
 
       case SIM:
@@ -82,6 +88,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         flywheel = new Flywheel(new FlywheelIOSim());
+        roller = new Roller(new RollerIOSim());
         break;
 
       default:
@@ -94,6 +101,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         flywheel = new Flywheel(new FlywheelIO() {});
+        // roller = new Roller(new RollerIO() {});
+        roller = new Roller(new RollerIOSim());
         break;
     }
 
@@ -148,7 +157,18 @@ public class RobotContainer {
         .whileTrue(
             Commands.startEnd(
                 () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
-  }
+    controller
+        .rightTrigger()
+        .whileTrue(
+          roller.intakeCommand()
+        );
+    controller
+        .leftTrigger()
+        .whileTrue(
+          roller.outtakeCommand()
+        );
+
+    }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
