@@ -5,14 +5,13 @@
 // modify it under the terms of the GNU General Public License
 // version 3 as published by the Free Software Foundation or
 // available in the root directory of this project.
-//
+//   
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
 package frc.robot;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -23,6 +22,7 @@ package frc.robot;
  */
 public final class Constants {
   public static final Mode currentMode = Mode.REAL;
+  public static final double LOOP_PERIOD_SECS = 0; //TODO change
 
   public static enum Mode {
     /** Running on a real robot. */
