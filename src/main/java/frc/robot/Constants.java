@@ -5,7 +5,7 @@
 // modify it under the terms of the GNU General Public License
 // version 3 as published by the Free Software Foundation or
 // available in the root directory of this project.
-//   
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
@@ -21,8 +21,10 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final Mode currentMode = Mode.REAL;
-  public static final double LOOP_PERIOD_SECS = 0; //TODO change
+  public static final Mode currentMode = Mode.SIM;
+  public static final double LOOP_PERIOD_SECS = 0.02; // TODO change
+
+  public static final boolean tuningMode = true;
 
   public static enum Mode {
     /** Running on a real robot. */

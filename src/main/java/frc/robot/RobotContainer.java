@@ -24,6 +24,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.FeedForwardCharacterization;
+import frc.robot.subsystems.bottompivot.BottomPivot;
+import frc.robot.subsystems.bottompivot.BottomPivotIO;
+import frc.robot.subsystems.bottompivot.BottomPivotIOSim;
+import frc.robot.subsystems.bottompivot.BottomPivotIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -34,7 +38,6 @@ import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -48,6 +51,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Flywheel flywheel;
+  private final BottomPivot bottomPivot;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -62,14 +66,16 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-   
-        drive = new Drive(
-        new GyroIOPigeon2(),
-        new ModuleIOTalonFX(0),
-        new ModuleIOTalonFX(1),
-        new ModuleIOTalonFX(2),
-        new ModuleIOTalonFX(3));
+
+        drive =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(0),
+                new ModuleIOTalonFX(1),
+                new ModuleIOTalonFX(2),
+                new ModuleIOTalonFX(3));
         flywheel = new Flywheel(new FlywheelIOTalonFX());
+        bottomPivot = new BottomPivot(new BottomPivotIOTalonFX());
         break;
 
       case SIM:
@@ -82,6 +88,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         flywheel = new Flywheel(new FlywheelIOSim());
+        bottomPivot = new BottomPivot(new BottomPivotIOSim());
         break;
 
       default:
@@ -94,6 +101,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         flywheel = new Flywheel(new FlywheelIO() {});
+        bottomPivot = new BottomPivot(new BottomPivotIO() {});
         break;
     }
 
@@ -115,6 +123,7 @@ public class RobotContainer {
         "Flywheel FF Characterization",
         new FeedForwardCharacterization(
             flywheel, flywheel::runCharacterizationVolts, flywheel::getCharacterizationVelocity));
+    autoChooser.addOption("BottomPivot High Launch", bottomPivot.highLaunchCommand());
 
     // Configure the button bindings
     configureButtonBindings();
