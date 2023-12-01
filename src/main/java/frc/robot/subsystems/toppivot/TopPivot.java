@@ -1,4 +1,4 @@
-package frc.robot.subsystems.bottompivot;
+package frc.robot.subsystems.toppivot;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,22 +10,22 @@ import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class BottomPivot extends SubsystemBase {
-  public static final Rotation2d IDLE_POSITION = Rotation2d.fromDegrees(90.0);
-  public static final Rotation2d HIGH_LAUNCH_POSITION = Rotation2d.fromDegrees(75);
-  public static final Rotation2d MID_LAUNCH_POSITION = Rotation2d.fromDegrees(45);
-  public static final Rotation2d LOW_LAUNCH_POSITION = Rotation2d.fromDegrees(25);
-  public static final Rotation2d DEPLOYED_POSITION = Rotation2d.fromDegrees(-10); // Intake Position
+public class TopPivot extends SubsystemBase {
+  public static final Rotation2d IDLE_POSITION = Rotation2d.fromDegrees(0);
+  public static final Rotation2d HIGH_LAUNCH_POSITION = Rotation2d.fromDegrees(-75);
+  public static final Rotation2d MID_LAUNCH_POSITION = Rotation2d.fromDegrees(-45);
+  public static final Rotation2d LOW_LAUNCH_POSITION = Rotation2d.fromDegrees(-25);
+  public static final Rotation2d DEPLOYED_POSITION = Rotation2d.fromDegrees(120); // Intake Position
 
-  public static final LoggedTunableNumber K_P = new LoggedTunableNumber("BottomPivot/kP", 0.2);
-  public static final LoggedTunableNumber K_D = new LoggedTunableNumber("BottomPivot/kD", 0.001);
+  public static final LoggedTunableNumber K_P = new LoggedTunableNumber("TopPivot/kP", 0.2);
+  public static final LoggedTunableNumber K_D = new LoggedTunableNumber("TopPivot/kD", 0.001);
   public static final LoggedTunableNumber MAX_VELOCITY =
-      new LoggedTunableNumber("BottomPivot/maxVelocity", 600.0);
+      new LoggedTunableNumber("TopPivot/maxVelocity", 600.0);
   public static final LoggedTunableNumber MAX_ACCELERATION =
-      new LoggedTunableNumber("BottomPivot/maxAcceleration", 650.0);
+      new LoggedTunableNumber("TopPivot/maxAcceleration", 650.0);
 
-  private final BottomPivotIO io;
-  private final BottomPivotIOInputsAutoLogged inputs = new BottomPivotIOInputsAutoLogged();
+  private final TopPivotIO io;
+  private final TopPivotIOInputsAutoLogged inputs = new TopPivotIOInputsAutoLogged();
 
   private final ProfiledPIDController controller =
       new ProfiledPIDController(
@@ -39,10 +39,10 @@ public class BottomPivot extends SubsystemBase {
   // @AutoLogOutput private final Mechanism2d mechanism = new Mechanism2d(2.0, 2.0);
   // private final MechanismRoot2d mechanismRoot = mechanism.getRoot("Root", 1, 0.3);
   // private final MechanismLigament2d mechanismLigament =
-  //     mechanismRoot.append(
-  //         new MechanismLigament2d("BottomPivot", 1.2, 90, 4, new Color8Bit(Color.kLightGreen)));
+  // mechanismRoot.append(
+  //     new MechanismLigament2d("TopPivot", 1.2, 90, 4, new Color8Bit(Color.kLightGreen)));
 
-  public BottomPivot(BottomPivotIO io) {
+  public TopPivot(TopPivotIO io) {
     this.io = io;
     setDefaultCommand(run(() -> setDeployed(false)));
   }
@@ -55,7 +55,7 @@ public class BottomPivot extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("BottomPivot", inputs);
+    Logger.processInputs("TopPivot", inputs);
 
     // mechanismLigament.setAngle(getPosition());
 
@@ -76,6 +76,8 @@ public class BottomPivot extends SubsystemBase {
       double voltage = controller.calculate(getPosition().getDegrees());
       io.setVoltage(voltage);
     }
+
+    Logger.recordOutput("TopPivot/setpoint", controller.getSetpoint().position);
   }
 
   @AutoLogOutput
