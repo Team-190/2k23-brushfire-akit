@@ -1,5 +1,4 @@
 package frc.robot;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -9,6 +8,8 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final Mode currentMode = Mode.SIM;
+  public static final double LOOP_PERIOD_SECS = 0.02; // TODO change
   public static final double LOOP_PERIOD_SECS = 0.02;
   public static final double MATCH_END_THRESHOLD =
       0.25; // FMS reports "0" ~250ms before the end of the match anyway
