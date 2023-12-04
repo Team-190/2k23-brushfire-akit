@@ -14,4 +14,6 @@ public interface ExtensionIO {
   public default void updateInputs(ExtensionIOInputs inputs) {}
 
   public default void setVoltage(double volts) {}
+
+  public default void stop() {}
 }

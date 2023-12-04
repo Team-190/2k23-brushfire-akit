@@ -3,9 +3,12 @@ package frc.robot.subsystems.extension;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.util.Units;
 
 public class ExtensionIOTalonFX implements ExtensionIO {
   public static final double GEAR_RATIO = 10;
@@ -42,8 +45,16 @@ public class ExtensionIOTalonFX implements ExtensionIO {
   }
 
   @Override
-  public void updateInputs(ExtensionIOInputs inputs) {}
+  public void updateInputs(ExtensionIOInputs inputs) {
+    inputs.positionRad = Units.rotationsToRadians(position.getValueAsDouble());
+
+  }
 
   @Override
-  public void setVoltage(double volts) {}
+  public void setVoltage(double volts) {
+    motor.setControl(new VoltageOut(volts));
+  }
+
+  @Override
+  public void stop() {}
 }

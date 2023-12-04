@@ -12,6 +12,9 @@ public class ExtensionIOSim implements ExtensionIO {
   private double appliedVolts;
 
   @Override
+  /**
+   * passes in an inputs object, which is updated to the current state
+   */
   public void updateInputs(ExtensionIOInputs inputs) {
     sim.update(0.02);
     inputs.positionRad = (sim.getPositionMeters()) / Units.inchesToMeters(0.25);
@@ -24,5 +27,10 @@ public class ExtensionIOSim implements ExtensionIO {
   public void setVoltage(double volts) {
     appliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
     sim.setInputVoltage(appliedVolts);
+  }
+
+  @Override
+  public void stop() {
+    setVoltage(0);
   }
 }
