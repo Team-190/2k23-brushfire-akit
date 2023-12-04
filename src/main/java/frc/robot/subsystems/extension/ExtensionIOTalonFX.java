@@ -47,7 +47,9 @@ public class ExtensionIOTalonFX implements ExtensionIO {
   @Override
   public void updateInputs(ExtensionIOInputs inputs) {
     inputs.positionRad = Units.rotationsToRadians(position.getValueAsDouble());
-
+    inputs.velocityRadPerSec = Units.rotationsToRadians(velocity.getValueAsDouble());
+    inputs.appliedVolts = appliedVolts.getValueAsDouble();
+    inputs.currentAmps = new double[] {current.getValueAsDouble()};
   }
 
   @Override
@@ -56,5 +58,9 @@ public class ExtensionIOTalonFX implements ExtensionIO {
   }
 
   @Override
-  public void stop() {}
+  public void stop(){
+    motor.stopMotor();
+  }
+
+
 }
