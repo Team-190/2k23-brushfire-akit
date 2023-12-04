@@ -48,6 +48,10 @@ import frc.robot.subsystems.toppivot.TopPivotIO;
 import frc.robot.subsystems.toppivot.TopPivotIOSim;
 import frc.robot.subsystems.toppivot.TopPivotIOTalonFX;
 import org.littletonrobotics.junction.AutoLogOutput;
+import frc.robot.subsystems.roller.Roller;
+import frc.robot.subsystems.roller.RollerIOSim;
+import frc.robot.subsystems.roller.RollerIOTalonFX;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -63,6 +67,7 @@ public class RobotContainer {
   private final Flywheel flywheel;
   private final BottomPivot bottomPivot;
   private final TopPivot topPivot;
+  private final Roller roller;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -103,6 +108,7 @@ public class RobotContainer {
         flywheel = new Flywheel(new FlywheelIOTalonFX());
         bottomPivot = new BottomPivot(new BottomPivotIOTalonFX());
         topPivot = new TopPivot(new TopPivotIOTalonFX());
+        roller = new Roller(new RollerIOTalonFX());
         break;
 
       case SIM:
@@ -117,6 +123,7 @@ public class RobotContainer {
         flywheel = new Flywheel(new FlywheelIOSim());
         bottomPivot = new BottomPivot(new BottomPivotIOSim());
         topPivot = new TopPivot(new TopPivotIOSim());
+        roller = new Roller(new RollerIOSim());
         break;
 
       default:
@@ -131,6 +138,8 @@ public class RobotContainer {
         flywheel = new Flywheel(new FlywheelIO() {});
         bottomPivot = new BottomPivot(new BottomPivotIO() {});
         topPivot = new TopPivot(new TopPivotIO() {});
+        // roller = new Roller(new RollerIO() {});
+        roller = new Roller(new RollerIOSim());
         break;
     }
 
@@ -188,7 +197,18 @@ public class RobotContainer {
         .whileTrue(
             Commands.startEnd(
                 () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
-  }
+    controller
+        .rightTrigger()
+        .whileTrue(
+          roller.intakeCommand()
+        );
+    controller
+        .leftTrigger()
+        .whileTrue(
+          roller.outtakeCommand()
+        );
+
+    }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
