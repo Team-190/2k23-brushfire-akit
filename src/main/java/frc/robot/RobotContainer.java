@@ -14,7 +14,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -39,21 +38,15 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.flywheel.Flywheel;
-import frc.robot.subsystems.flywheel.FlywheelIO;
-import frc.robot.subsystems.flywheel.FlywheelIOSim;
-import frc.robot.subsystems.flywheel.FlywheelIOTalonFX;
+import frc.robot.subsystems.roller.Roller;
+import frc.robot.subsystems.roller.RollerIOSim;
+import frc.robot.subsystems.roller.RollerIOTalonFX;
 import frc.robot.subsystems.toppivot.TopPivot;
 import frc.robot.subsystems.toppivot.TopPivotIO;
 import frc.robot.subsystems.toppivot.TopPivotIOSim;
 import frc.robot.subsystems.toppivot.TopPivotIOTalonFX;
 import org.littletonrobotics.junction.AutoLogOutput;
-import frc.robot.subsystems.roller.Roller;
-import frc.robot.subsystems.roller.RollerIOSim;
-import frc.robot.subsystems.roller.RollerIOTalonFX;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -64,7 +57,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Flywheel flywheel;
   private final BottomPivot bottomPivot;
   private final TopPivot topPivot;
   private final Roller roller;
@@ -74,8 +66,6 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-  private final LoggedDashboardNumber flywheelSpeedInput =
-      new LoggedDashboardNumber("Flywheel Speed", 1500.0);
 
   // mechanism 2d
   @AutoLogOutput private final Mechanism2d mechanism = new Mechanism2d(2.0, 2.0);
@@ -105,7 +95,6 @@ public class RobotContainer {
                 new ModuleIOTalonFX(1),
                 new ModuleIOTalonFX(2),
                 new ModuleIOTalonFX(3));
-        flywheel = new Flywheel(new FlywheelIOTalonFX());
         bottomPivot = new BottomPivot(new BottomPivotIOTalonFX());
         topPivot = new TopPivot(new TopPivotIOTalonFX());
         roller = new Roller(new RollerIOTalonFX());
@@ -120,7 +109,6 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        flywheel = new Flywheel(new FlywheelIOSim());
         bottomPivot = new BottomPivot(new BottomPivotIOSim());
         topPivot = new TopPivot(new TopPivotIOSim());
         roller = new Roller(new RollerIOSim());
@@ -135,19 +123,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        flywheel = new Flywheel(new FlywheelIO() {});
         bottomPivot = new BottomPivot(new BottomPivotIO() {});
         topPivot = new TopPivot(new TopPivotIO() {});
         // roller = new Roller(new RollerIO() {});
         roller = new Roller(new RollerIOSim());
         break;
     }
-
-    // Set up named commands for PathPlanner
-    NamedCommands.registerCommand(
-        "Run Flywheel",
-        Commands.startEnd(
-            () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -157,10 +138,6 @@ public class RobotContainer {
         "Drive FF Characterization",
         new FeedForwardCharacterization(
             drive, drive::runCharacterizationVolts, drive::getCharacterizationVelocity));
-    autoChooser.addOption(
-        "Flywheel FF Characterization",
-        new FeedForwardCharacterization(
-            flywheel, flywheel::runCharacterizationVolts, flywheel::getCharacterizationVelocity));
     autoChooser.addOption("BottomPivot High Launch", bottomPivot.highLaunchCommand());
     autoChooser.addOption(
         "TopPivot High Launch",
@@ -192,23 +169,9 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    controller
-        .a()
-        .whileTrue(
-            Commands.startEnd(
-                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
-    controller
-        .rightTrigger()
-        .whileTrue(
-          roller.intakeCommand()
-        );
-    controller
-        .leftTrigger()
-        .whileTrue(
-          roller.outtakeCommand()
-        );
-
-    }
+    controller.rightTrigger().whileTrue(roller.intakeCommand());
+    controller.leftTrigger().whileTrue(roller.outtakeCommand());
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
