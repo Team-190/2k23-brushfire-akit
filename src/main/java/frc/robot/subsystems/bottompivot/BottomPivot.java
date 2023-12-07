@@ -15,7 +15,6 @@ public class BottomPivot extends SubsystemBase {
   public static final Rotation2d HIGH_LAUNCH_POSITION = Rotation2d.fromDegrees(75);
   public static final Rotation2d MID_LAUNCH_POSITION = Rotation2d.fromDegrees(45);
   public static final Rotation2d LOW_LAUNCH_POSITION = Rotation2d.fromDegrees(25);
-  public static final Rotation2d DEPLOYED_POSITION = Rotation2d.fromDegrees(-10); // Intake Position
 
   public static final LoggedTunableNumber K_P = new LoggedTunableNumber("BottomPivot/kP", 0.2);
   public static final LoggedTunableNumber K_D = new LoggedTunableNumber("BottomPivot/kD", 0.001);
@@ -44,7 +43,7 @@ public class BottomPivot extends SubsystemBase {
 
   public BottomPivot(BottomPivotIO io) {
     this.io = io;
-    setDefaultCommand(run(() -> setDeployed(false)));
+    setDefaultCommand(run(() ->  controller.setGoal(IDLE_POSITION.getDegrees())));
   }
 
   @AutoLogOutput
@@ -83,51 +82,63 @@ public class BottomPivot extends SubsystemBase {
     return controller.getSetpoint().equals(controller.getGoal());
   }
 
-  public void setDeployed(boolean deployed) {
+  public void setHighLaunch(boolean deployed, boolean flipped) {
     if (deployed) {
-      controller.setGoal(DEPLOYED_POSITION.getDegrees());
+      if (flipped) {
+        Rotation2d invertedAngle = Rotation2d.fromDegrees(180).minus(HIGH_LAUNCH_POSITION);
+        controller.setGoal(invertedAngle.getDegrees());
+        
+      }
+
+      else {
+        controller.setGoal(HIGH_LAUNCH_POSITION.getDegrees());
+      }
     } else {
       controller.setGoal(IDLE_POSITION.getDegrees());
     }
   }
 
-  public void setHighLaunch(boolean deployed) {
+  public void setMidLaunch(boolean deployed, boolean flipped) {
     if (deployed) {
-      controller.setGoal(HIGH_LAUNCH_POSITION.getDegrees());
+      if (flipped) {
+        Rotation2d invertedAngle = Rotation2d.fromDegrees(180).minus(MID_LAUNCH_POSITION);
+        controller.setGoal(invertedAngle.getDegrees());
+        
+      }
+
+      else {
+        controller.setGoal(MID_LAUNCH_POSITION.getDegrees());
+      }
     } else {
       controller.setGoal(IDLE_POSITION.getDegrees());
     }
   }
 
-  public void setMidLaunch(boolean deployed) {
+  public void setLowLaunch(boolean deployed, boolean flipped) {
     if (deployed) {
-      controller.setGoal(MID_LAUNCH_POSITION.getDegrees());
+      if (flipped) {
+        Rotation2d invertedAngle = Rotation2d.fromDegrees(180).minus(LOW_LAUNCH_POSITION);
+        controller.setGoal(invertedAngle.getDegrees());
+        
+      }
+
+      else {
+        controller.setGoal(LOW_LAUNCH_POSITION.getDegrees());
+      }
     } else {
       controller.setGoal(IDLE_POSITION.getDegrees());
     }
   }
 
-  public void setLowLaunch(boolean deployed) {
-    if (deployed) {
-      controller.setGoal(LOW_LAUNCH_POSITION.getDegrees());
-    } else {
-      controller.setGoal(IDLE_POSITION.getDegrees());
-    }
+  public Command lowLaunchCommand(boolean flipped) {
+    return startEnd(() -> setLowLaunch(true, flipped), () -> setLowLaunch(false, flipped));
   }
 
-  public Command deployCommand() {
-    return startEnd(() -> setDeployed(true), () -> setDeployed(false));
+  public Command midLaunchCofmmand(boolean flipped) {
+    return startEnd(() -> setMidLaunch(true, flipped), () -> setMidLaunch(false, flipped));
   }
 
-  public Command lowLaunchCommand() {
-    return startEnd(() -> setDeployed(true), () -> setDeployed(false));
-  }
-
-  public Command midLaunchCommand() {
-    return startEnd(() -> setMidLaunch(true), () -> setMidLaunch(false));
-  }
-
-  public Command highLaunchCommand() {
-    return startEnd(() -> setHighLaunch(true), () -> setHighLaunch(false));
+  public Command highLaunchCommand(boolean flipped) {
+    return startEnd(() -> setHighLaunch(true, flipped), () -> setHighLaunch(false, flipped));
   }
 }
