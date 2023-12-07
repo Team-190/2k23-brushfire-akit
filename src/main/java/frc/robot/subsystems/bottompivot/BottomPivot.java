@@ -134,7 +134,7 @@ public class BottomPivot extends SubsystemBase {
     return startEnd(() -> setLowLaunch(true, flipped), () -> setLowLaunch(false, flipped));
   }
 
-  public Command midLaunchCofmmand(boolean flipped) {
+  public Command midLaunchCommand(boolean flipped) {
     return startEnd(() -> setMidLaunch(true, flipped), () -> setMidLaunch(false, flipped));
   }
 
