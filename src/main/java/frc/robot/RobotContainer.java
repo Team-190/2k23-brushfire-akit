@@ -183,15 +183,15 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
     controller
         .a()
         .whileTrue(
@@ -208,6 +208,31 @@ public class RobotContainer {
           roller.outtakeCommand()
         );
 
+     controller
+        .y()
+        .whileTrue(
+            Commands.parallel(
+              bottomPivot.highLaunchCommand(),
+              topPivot.highLaunchCommand()
+              )    
+        );
+      controller
+      .b()
+      .whileTrue(
+          Commands.parallel(
+            bottomPivot.midLaunchCommand(),
+            topPivot.midLaunchCommand()
+            )    
+      );
+      controller
+      .a()
+      .whileTrue(
+          Commands.parallel(
+            bottomPivot.lowLaunchCommand(),
+            topPivot.lowLaunchCommand()
+          )
+      );
+    
     }
 
   /**
