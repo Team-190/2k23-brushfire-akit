@@ -48,7 +48,9 @@ import frc.robot.subsystems.toppivot.TopPivot;
 import frc.robot.subsystems.toppivot.TopPivotIO;
 import frc.robot.subsystems.toppivot.TopPivotIOSim;
 import frc.robot.subsystems.toppivot.TopPivotIOTalonFX;
+import frc.robot.util.BrushfireMechanism3d;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -84,6 +86,11 @@ public class RobotContainer {
   public void updateMechanism() {
     bottomPivotLigament.setAngle(bottomPivot.getPosition());
     topPivotLigament.setAngle(topPivot.getPosition());
+    bottomPivotLigament.setLength(extension.getPosition());
+    Logger.recordOutput(
+        "Mechanism3d",
+        BrushfireMechanism3d.getPoses(
+            bottomPivot.getPosition(), extension.getPosition(), topPivot.getPosition()));
   }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -181,27 +188,39 @@ public class RobotContainer {
         .whileTrue(
             Commands.either(
                 Commands.parallel(
-                    bottomPivot.highLaunchCommand(true), topPivot.highLaunchCommand(true)),
+                    bottomPivot.highLaunchCommand(true),
+                    topPivot.highLaunchCommand(true),
+                    extension.highLaunchCommand()),
                 Commands.parallel(
-                    bottomPivot.highLaunchCommand(false), topPivot.highLaunchCommand(false)),
+                    bottomPivot.highLaunchCommand(false),
+                    topPivot.highLaunchCommand(false),
+                    extension.highLaunchCommand()),
                 this::getFlipped));
     controller
         .b()
         .whileTrue(
             Commands.either(
                 Commands.parallel(
-                    bottomPivot.midLaunchCommand(true), topPivot.midLaunchCommand(true)),
+                    bottomPivot.midLaunchCommand(true),
+                    topPivot.midLaunchCommand(true),
+                    extension.midLaunchCommand()),
                 Commands.parallel(
-                    bottomPivot.midLaunchCommand(false), topPivot.midLaunchCommand(false)),
+                    bottomPivot.midLaunchCommand(false),
+                    topPivot.midLaunchCommand(false),
+                    extension.midLaunchCommand()),
                 this::getFlipped));
     controller
         .a()
         .whileTrue(
             Commands.either(
                 Commands.parallel(
-                    bottomPivot.lowLaunchCommand(true), topPivot.lowLaunchCommand(true)),
+                    bottomPivot.lowLaunchCommand(true),
+                    topPivot.lowLaunchCommand(true),
+                    extension.lowLaunchCommand()),
                 Commands.parallel(
-                    bottomPivot.lowLaunchCommand(false), topPivot.lowLaunchCommand(false)),
+                    bottomPivot.lowLaunchCommand(false),
+                    topPivot.lowLaunchCommand(false),
+                    extension.lowLaunchCommand()),
                 this::getFlipped));
   }
 

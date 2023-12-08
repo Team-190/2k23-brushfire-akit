@@ -5,11 +5,19 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants;
+import frc.robot.util.BrushfireMechanism3d;
 
 public class ExtensionIOSim implements ExtensionIO {
   private ElevatorSim sim =
       new ElevatorSim(
-          DCMotor.getFalcon500(1), 10.0, 7.0, Units.inchesToMeters(0.25), 0.3, 2.0, false, 0.3);
+          DCMotor.getFalcon500(1),
+          10.0,
+          7.0,
+          Units.inchesToMeters(0.25),
+          BrushfireMechanism3d.MIN_EXTENSION,
+          BrushfireMechanism3d.MAX_EXTENSION,
+          false,
+          0.3);
   private double appliedVolts;
 
   @Override

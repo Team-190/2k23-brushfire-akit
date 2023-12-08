@@ -25,13 +25,13 @@ public class Extension extends SubsystemBase {
   public static final double LOW_LAUNCH_POSITION = 1;
   public static final double DEPLOYED_POSITION = 0.5;
 
-  public static final LoggedTunableNumber K_P = new LoggedTunableNumber("Extension/kP", 0.2);
+  public static final LoggedTunableNumber K_P = new LoggedTunableNumber("Extension/kP", 100);
   public static final LoggedTunableNumber K_D = new LoggedTunableNumber("Extension/kD", 0.001);
 
   public static final LoggedTunableNumber MAX_VELOCITY =
-      new LoggedTunableNumber("Extension/maxVelocity", 600.0);
+      new LoggedTunableNumber("Extension/maxVelocity", 1.5);
   public static final LoggedTunableNumber MAX_ACCELERATION =
-      new LoggedTunableNumber("Extension/maxAcceleration", 650.0);
+      new LoggedTunableNumber("Extension/maxAcceleration", 10);
 
   private final ExtensionIO io;
   private final ExtensionIOInputsAutoLogged inputs = new ExtensionIOInputsAutoLogged();
@@ -111,15 +111,15 @@ public class Extension extends SubsystemBase {
     }
   }
 
-  public Command lowLaunchCommand(boolean flipped) {
+  public Command lowLaunchCommand() {
     return startEnd(() -> setLowLaunch(true), () -> setLowLaunch(false));
   }
 
-  public Command midLaunchCommand(boolean flipped) {
+  public Command midLaunchCommand() {
     return startEnd(() -> setMidLaunch(true), () -> setMidLaunch(false));
   }
 
-  public Command highLaunchCommand(boolean flipped) {
+  public Command highLaunchCommand() {
     return startEnd(() -> setHighLaunch(true), () -> setHighLaunch(false));
   }
 }
