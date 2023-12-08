@@ -1,14 +1,25 @@
 package frc.robot.subsystems.extension;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import frc.robot.util.LoggedTunableNumber;
 
 public class Extension extends SubsystemBase {
+  public static final Rotation2d IDLE_POSITION = Rotation2d.fromDegrees(0);
+  public static final Rotation2d HIGH_LAUNCH_POSITION = Rotation2d.fromDegrees(-75);
+  public static final Rotation2d MID_LAUNCH_POSITION = Rotation2d.fromDegrees(-45);
+  public static final Rotation2d LOW_LAUNCH_POSITION = Rotation2d.fromDegrees(-25);
+  public static final Rotation2d DEPLOYED_POSITION = Rotation2d.fromDegrees(120); // Intake Position
+
+  public static final LoggedTunableNumber K_P = new LoggedTunableNumber("Extension/kP", 0.2);
+  public static final LoggedTunableNumber K_D = new LoggedTunableNumber("Extension/kD", 0.001);
+
   private final ExtensionIO io;
   private final ExtensionIOInputsAutoLogged inputs = new ExtensionIOInputsAutoLogged();
   private final SimpleMotorFeedforward ffModel;
