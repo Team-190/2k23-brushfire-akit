@@ -8,7 +8,7 @@ import frc.robot.Constants;
 public class BottomPivotIOSim implements BottomPivotIO {
   private SingleJointedArmSim sim =
       new SingleJointedArmSim(
-          DCMotor.getFalcon500(1), 125.0, 1.5, 1.0, 0, Math.PI, false, Math.PI / 2);
+          DCMotor.getFalcon500(1), 125.0, 1.5, 1.0, 0, Math.PI, true, Math.PI / 2);
   private double appliedVolts = 0.0;
 
   @Override

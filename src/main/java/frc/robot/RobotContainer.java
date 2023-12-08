@@ -34,7 +34,6 @@ import frc.robot.subsystems.bottompivot.BottomPivotIOSim;
 import frc.robot.subsystems.bottompivot.BottomPivotIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
@@ -73,7 +72,7 @@ public class RobotContainer {
   private final MechanismRoot2d mechanismRoot = mechanism.getRoot("Root", 1, 0.3);
   private final MechanismLigament2d bottomPivotLigament =
       mechanismRoot.append(
-          new MechanismLigament2d("BottomPivot", 1.2, 90, 4, new Color8Bit(Color.kLightGreen)));
+          new MechanismLigament2d("BottomPivot", 1.0, 90, 4, new Color8Bit(Color.kLightGreen)));
   private final MechanismLigament2d topPivotLigament =
       bottomPivotLigament.append(
           new MechanismLigament2d("TopPivot", .2, 90, 4, new Color8Bit(Color.kAliceBlue)));
@@ -88,7 +87,6 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-
         drive =
             new Drive(
                 new GyroIOPigeon2(),
@@ -134,17 +132,13 @@ public class RobotContainer {
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    boolean flipped = getFlipped();
-
     // Set up FF characterization routines
     autoChooser.addOption(
         "Drive FF Characterization",
         new FeedForwardCharacterization(
             drive, drive::runCharacterizationVolts, drive::getCharacterizationVelocity));
-    autoChooser.addOption("BottomPivot High Launch", bottomPivot.highLaunchCommand(flipped));
-    autoChooser.addOption(
-        "TopPivot High Launch",
-        topPivot.highLaunchCommand(flipped).alongWith(bottomPivot.highLaunchCommand(flipped)));
+    autoChooser.addOption("Test", topPivot.highLaunchCommand(true));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -172,44 +166,36 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
-    controller
-        .rightTrigger()
-        .whileTrue(
-          roller.intakeCommand()
-        );
-    controller
-        .leftTrigger()
-        .whileTrue(
-          roller.outtakeCommand()
-        );
+    controller.rightTrigger().whileTrue(roller.intakeCommand());
+    controller.leftTrigger().whileTrue(roller.outtakeCommand());
 
-    boolean flipped = getFlipped();
-
-     controller
+    controller
         .y()
         .whileTrue(
-            Commands.parallel(
-              bottomPivot.highLaunchCommand(flipped),
-              topPivot.highLaunchCommand(flipped)
-              )    
-        );
-      controller
-      .b()
-      .whileTrue(
-          Commands.parallel(
-            bottomPivot.midLaunchCommand(flipped),
-            topPivot.midLaunchCommand(flipped)
-            )    
-      );
-      controller
-      .a()
-      .whileTrue(
-          Commands.parallel(
-            bottomPivot.lowLaunchCommand(flipped),
-            topPivot.lowLaunchCommand(flipped)
-          )
-      );
-    
+            Commands.either(
+                Commands.parallel(
+                    bottomPivot.highLaunchCommand(true), topPivot.highLaunchCommand(true)),
+                Commands.parallel(
+                    bottomPivot.highLaunchCommand(false), topPivot.highLaunchCommand(false)),
+                this::getFlipped));
+    controller
+        .b()
+        .whileTrue(
+            Commands.either(
+                Commands.parallel(
+                    bottomPivot.midLaunchCommand(true), topPivot.midLaunchCommand(true)),
+                Commands.parallel(
+                    bottomPivot.midLaunchCommand(false), topPivot.midLaunchCommand(false)),
+                this::getFlipped));
+    controller
+        .a()
+        .whileTrue(
+            Commands.either(
+                Commands.parallel(
+                    bottomPivot.lowLaunchCommand(true), topPivot.lowLaunchCommand(true)),
+                Commands.parallel(
+                    bottomPivot.lowLaunchCommand(false), topPivot.lowLaunchCommand(false)),
+                this::getFlipped));
   }
 
   /**
@@ -223,6 +209,6 @@ public class RobotContainer {
 
   private boolean getFlipped() {
     double degrees = drive.getRotation().getDegrees();
-    return degrees > 90  || degrees < 270;
+    return Math.abs(degrees) > 90.0;
   }
 }

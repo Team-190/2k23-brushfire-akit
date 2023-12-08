@@ -12,10 +12,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class TopPivot extends SubsystemBase {
   public static final Rotation2d IDLE_POSITION = Rotation2d.fromDegrees(0);
-  public static final Rotation2d HIGH_LAUNCH_POSITION = Rotation2d.fromDegrees(-75);
-  public static final Rotation2d MID_LAUNCH_POSITION = Rotation2d.fromDegrees(-45);
-  public static final Rotation2d LOW_LAUNCH_POSITION = Rotation2d.fromDegrees(-25);
-  public static final Rotation2d DEPLOYED_POSITION = Rotation2d.fromDegrees(120); // Intake Position
+  public static final Rotation2d HIGH_LAUNCH_POSITION = Rotation2d.fromDegrees(-90);
+  public static final Rotation2d MID_LAUNCH_POSITION = Rotation2d.fromDegrees(-90);
+  public static final Rotation2d LOW_LAUNCH_POSITION = Rotation2d.fromDegrees(-90);
 
   public static final LoggedTunableNumber K_P = new LoggedTunableNumber("TopPivot/kP", 0.2);
   public static final LoggedTunableNumber K_D = new LoggedTunableNumber("TopPivot/kD", 0.001);
@@ -35,12 +34,6 @@ public class TopPivot extends SubsystemBase {
           new TrapezoidProfile.Constraints(MAX_VELOCITY.get(), MAX_ACCELERATION.get()));
 
   private boolean closedLoop = true;
-
-  // @AutoLogOutput private final Mechanism2d mechanism = new Mechanism2d(2.0, 2.0);
-  // private final MechanismRoot2d mechanismRoot = mechanism.getRoot("Root", 1, 0.3);
-  // private final MechanismLigament2d mechanismLigament =
-  // mechanismRoot.append(
-  //     new MechanismLigament2d("TopPivot", 1.2, 90, 4, new Color8Bit(Color.kLightGreen)));
 
   public TopPivot(TopPivotIO io) {
     this.io = io;
@@ -90,9 +83,7 @@ public class TopPivot extends SubsystemBase {
       if (flipped) {
         Rotation2d invertedAngle = Rotation2d.fromDegrees(0).minus(HIGH_LAUNCH_POSITION);
         controller.setGoal(invertedAngle.getDegrees());
-      }
-
-      else {
+      } else {
         controller.setGoal(HIGH_LAUNCH_POSITION.getDegrees());
       }
     } else {
@@ -105,9 +96,7 @@ public class TopPivot extends SubsystemBase {
       if (flipped) {
         Rotation2d invertedAngle = Rotation2d.fromDegrees(0).minus(MID_LAUNCH_POSITION);
         controller.setGoal(invertedAngle.getDegrees());
-      }
-
-      else {
+      } else {
         controller.setGoal(MID_LAUNCH_POSITION.getDegrees());
       }
     } else {
@@ -120,16 +109,13 @@ public class TopPivot extends SubsystemBase {
       if (flipped) {
         Rotation2d invertedAngle = Rotation2d.fromDegrees(0).minus(LOW_LAUNCH_POSITION);
         controller.setGoal(invertedAngle.getDegrees());
-      }
-
-      else {
+      } else {
         controller.setGoal(LOW_LAUNCH_POSITION.getDegrees());
       }
     } else {
       controller.setGoal(IDLE_POSITION.getDegrees());
     }
   }
-
 
   public Command lowLaunchCommand(boolean flipped) {
     return startEnd(() -> setLowLaunch(true, flipped), () -> setLowLaunch(false, flipped));

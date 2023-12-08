@@ -35,15 +35,18 @@ public class BottomPivot extends SubsystemBase {
 
   private boolean closedLoop = true;
 
-  // @AutoLogOutput private final Mechanism2d mechanism = new Mechanism2d(2.0, 2.0);
-  // private final MechanismRoot2d mechanismRoot = mechanism.getRoot("Root", 1, 0.3);
+  // @AutoLogOutput private final Mechanism2d mechanism = new Mechanism2d(2.0,
+  // 2.0);
+  // private final MechanismRoot2d mechanismRoot = mechanism.getRoot("Root", 1,
+  // 0.3);
   // private final MechanismLigament2d mechanismLigament =
-  //     mechanismRoot.append(
-  //         new MechanismLigament2d("BottomPivot", 1.2, 90, 4, new Color8Bit(Color.kLightGreen)));
+  // mechanismRoot.append(
+  // new MechanismLigament2d("BottomPivot", 1.2, 90, 4, new
+  // Color8Bit(Color.kLightGreen)));
 
   public BottomPivot(BottomPivotIO io) {
     this.io = io;
-    setDefaultCommand(run(() ->  controller.setGoal(IDLE_POSITION.getDegrees())));
+    setDefaultCommand(run(() -> controller.setGoal(IDLE_POSITION.getDegrees())));
   }
 
   @AutoLogOutput
@@ -87,10 +90,7 @@ public class BottomPivot extends SubsystemBase {
       if (flipped) {
         Rotation2d invertedAngle = Rotation2d.fromDegrees(180).minus(HIGH_LAUNCH_POSITION);
         controller.setGoal(invertedAngle.getDegrees());
-        
-      }
-
-      else {
+      } else {
         controller.setGoal(HIGH_LAUNCH_POSITION.getDegrees());
       }
     } else {
@@ -103,10 +103,7 @@ public class BottomPivot extends SubsystemBase {
       if (flipped) {
         Rotation2d invertedAngle = Rotation2d.fromDegrees(180).minus(MID_LAUNCH_POSITION);
         controller.setGoal(invertedAngle.getDegrees());
-        
-      }
-
-      else {
+      } else {
         controller.setGoal(MID_LAUNCH_POSITION.getDegrees());
       }
     } else {
@@ -119,10 +116,7 @@ public class BottomPivot extends SubsystemBase {
       if (flipped) {
         Rotation2d invertedAngle = Rotation2d.fromDegrees(180).minus(LOW_LAUNCH_POSITION);
         controller.setGoal(invertedAngle.getDegrees());
-        
-      }
-
-      else {
+      } else {
         controller.setGoal(LOW_LAUNCH_POSITION.getDegrees());
       }
     } else {
