@@ -38,6 +38,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.extension.Extension;
+import frc.robot.subsystems.extension.ExtensionIOSim;
+import frc.robot.subsystems.extension.ExtensionIOTalonFX;
 import frc.robot.subsystems.roller.Roller;
 import frc.robot.subsystems.roller.RollerIOSim;
 import frc.robot.subsystems.roller.RollerIOTalonFX;
@@ -60,6 +63,7 @@ public class RobotContainer {
   private final BottomPivot bottomPivot;
   private final TopPivot topPivot;
   private final Roller roller;
+  private final Extension extension;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -97,6 +101,7 @@ public class RobotContainer {
         bottomPivot = new BottomPivot(new BottomPivotIOTalonFX());
         topPivot = new TopPivot(new TopPivotIOTalonFX());
         roller = new Roller(new RollerIOTalonFX());
+        extension = new Extension(new ExtensionIOTalonFX());
         break;
 
       case SIM:
@@ -111,6 +116,7 @@ public class RobotContainer {
         bottomPivot = new BottomPivot(new BottomPivotIOSim());
         topPivot = new TopPivot(new TopPivotIOSim());
         roller = new Roller(new RollerIOSim());
+        extension = new Extension(new ExtensionIOSim());
         break;
 
       default:
@@ -126,6 +132,7 @@ public class RobotContainer {
         topPivot = new TopPivot(new TopPivotIO() {});
         // roller = new Roller(new RollerIO() {});
         roller = new Roller(new RollerIOSim());
+        extension = new Extension(new ExtensionIOSim());
         break;
     }
 
